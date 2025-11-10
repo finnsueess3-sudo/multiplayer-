@@ -1,3 +1,26 @@
-<canvas id="game" width="800" height="600"></canvas>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="script.js"></script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Multiplayer FPS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="crosshair"></div>
+
+    <!-- Mobile Controls -->
+    <div id="mobileControls">
+        <div class="controlButton" id="up">↑</div>
+        <div class="controlButton" id="down">↓</div>
+        <div class="controlButton" id="left">←</div>
+        <div class="controlButton" id="right">→</div>
+        <div class="controlButton" id="jetpack">🛫</div>
+        <div class="controlButton" id="shoot">🔫</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
