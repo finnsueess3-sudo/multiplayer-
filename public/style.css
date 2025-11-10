@@ -1,69 +1,19 @@
-body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #87ceeb; /* Himmelblau */
-    font-family: sans-serif;
+body {margin:0; overflow:hidden; background:#000; font-family:sans-serif;}
+canvas {display:block;}
+#loadscreen {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    background:#000; color:#fff; display:flex;
+    justify-content:center; align-items:center; font-size:2em;
+    z-index:100;
 }
-
-canvas {
-    display: block;
-}
-
-/* Fadenkreuz */
 #crosshair {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin-left: -10px;
-    margin-top: -10px;
-    pointer-events: none;
+    position:absolute; top:50%; left:50%; width:20px; height:20px;
+    margin:-10px 0 0 -10px; pointer-events:none;
 }
-
-#crosshair::after,
-#crosshair::before {
-    content: '';
-    position: absolute;
-    background-color: red;
-}
-
-/* Vertikale Linie */
-#crosshair::after {
-    left: 9px;
-    top: 0;
-    width: 2px;
-    height: 20px;
-}
-
-/* Horizontale Linie */
-#crosshair::before {
-    top: 9px;
-    left: 0;
-    width: 20px;
-    height: 2px;
-}
-
-/* Mobile Steuerung */
-#mobileControls {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    padding: 0 20px;
-    z-index: 10;
-}
-
-.controlButton {
-    width: 60px;
-    height: 60px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 50%;
-    text-align: center;
-    line-height: 60px;
-    color: white;
-    font-weight: bold;
-    user-select: none;
-    touch-action: none; /* verhindert Scrollen auf Mobilgeräten */
-}
+#crosshair::after, #crosshair::before {content:''; position:absolute; background-color:red;}
+#crosshair::after {left:9px; top:0; width:2px; height:20px;}
+#crosshair::before {top:9px; left:0; width:20px; height:2px;}
+#joystickLeft, #joystickRight {position:absolute; bottom:20px; width:100px; height:100px; touch-action:none; z-index:10;}
+#joystickLeft {left:20px;} #joystickRight {right:20px;}
+.controlButton {position:absolute; bottom:20px; width:60px; height:60px; background:rgba(0,0,0,0.5); border-radius:50%; text-align:center; line-height:60px; color:white; font-weight:bold; user-select:none; z-index:10;}
+#shootBtn {right:140px;} #jetpackBtn {right:70px;}
