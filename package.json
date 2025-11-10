@@ -1,7 +1,7 @@
 {
   "name": "3d-multiplayer-fps",
   "version": "1.0.0",
-  "description": "3D Multiplayer FPS mit Jetpack und Blaster",
+  "description": "3D Multiplayer FPS mit Jetpack, Blaster und Sci-Fi Stadt",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -9,5 +9,6 @@
   "dependencies": {
     "express": "^4.18.2",
     "socket.io": "^4.7.2"
-  }
+  },
+  "license": "MIT"
 }
