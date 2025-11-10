@@ -1,8 +1,9 @@
 // ----------------------------
-// scripts.js - Komplett Version
+// scripts.js - Komplett Version mit funktionierendem Ladebildschirm
 // ----------------------------
 import * as THREE from 'three';
 import nipplejs from 'nipplejs';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
 
 const MODEL_PATH = '/models/Mandalorian.glb';
 let humanoidGLB = null;
@@ -17,7 +18,8 @@ const GRAVITY=-18, JET_ACCEL=28, JET_DOWN_ACCEL=-30, MAX_JET_SPEED=12;
 let keys = {};
 
 // ---------------- Loadscreen ----------------
-let loadProgress = 0, totalAssets = 2; // GLB + City
+let loadProgress = 0;
+const totalAssets = 2; // GLB + City
 let ships = [];
 
 // ---------------- DOM ----------------
@@ -59,18 +61,15 @@ async function initScene() {
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(16000,16000), new THREE.MeshStandardMaterial({ color:0x0d1722, metalness:0.18, roughness:0.7 }));
   ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
 
-  // Stadt
-  generateCityInstanced(600);
-
-  // Mandalorian
-  await loadMandalorianModel();
+  // Lade Assets
+  await loadAssets();
 
   // Controls
   setupControls();
 
-  // Ladeanimation
-  createShips(5);
-  simulateLoadProgressAndHide();
+  // Ships für Ladebildschirm entfernen
+  ships.forEach(s=>s.el.remove());
+  ships=[];
 
   window.addEventListener('resize',()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
@@ -81,16 +80,31 @@ async function initScene() {
   animate();
 }
 
-// ---------------- Mandalorian GLB ----------------
-async function loadMandalorianModel(){
-  const mod = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
-  const loader = new mod.GLTFLoader();
-  loader.load(MODEL_PATH,(gltf)=>{
-    humanoidGLB=gltf.scene;
-    humanoidGLB.scale.set(0.8,0.8,0.8);
-    humanoidGLB.traverse(n=>{ if(n.isMesh){ n.castShadow=true; n.receiveShadow=true; } });
-    loadProgress++; updateLoadBar();
-  },undefined,(err)=>{ console.warn(err); loadProgress++; updateLoadBar(); humanoidGLB=null; });
+// ---------------- Load Assets ----------------
+async function loadAssets(){
+    // 1) Mandalorian GLB
+    await new Promise(res=>{
+        const loader = new GLTFLoader();
+        loader.load(MODEL_PATH, gltf=>{
+            humanoidGLB = gltf.scene;
+            humanoidGLB.scale.set(0.8,0.8,0.8);
+            humanoidGLB.traverse(n=>{ if(n.isMesh){ n.castShadow=true; n.receiveShadow=true; }});
+            loadProgress++;
+            updateLoadBar();
+            res();
+        });
+    });
+
+    // 2) Instanced City
+    generateCityInstanced(600);
+    loadProgress++;
+    updateLoadBar();
+
+    // Nach kompletter Ladezeit Bildschirm ausblenden
+    const ls = document.getElementById('loadscreen');
+    ls.style.transition = 'opacity 0.8s';
+    ls.style.opacity = '0';
+    setTimeout(()=>{ ls.style.display='none'; }, 900);
 }
 
 // ---------------- Instanced City ----------------
@@ -108,23 +122,12 @@ function generateCityInstanced(numBuildings=600){
     inst.setMatrixAt(i,tmpMat);
   }
   scene.add(inst);
-  loadProgress++; updateLoadBar();
 }
 
 // ---------------- Loadbar ----------------
 function updateLoadBar(){
   const bar = document.getElementById('loadingBar');
-  if(bar) bar.style.width = Math.floor((loadProgress/totalAssets)*100) + '%';
-}
-
-function simulateLoadProgressAndHide(){
-  const interval = setInterval(()=>{
-    updateLoadBar();
-    if(loadProgress>=totalAssets){ clearInterval(interval);
-      const ls = document.getElementById('loadscreen');
-      if(ls){ ls.style.transition='opacity 0.8s'; ls.style.opacity='0'; setTimeout(()=>{ ls.style.display='none'; },900); }
-    }
-  },50);
+  if(bar) bar.style.width = Math.floor((loadProgress/totalAssets)*100)+'%';
 }
 
 // ---------------- Ships Animation ----------------
@@ -145,16 +148,15 @@ function createShips(num=5){
 
 function animateShips(delta){
   ships.forEach(s=>{
-    let left=parseFloat(s.el.style.left);
-    left += s.speed*delta;
+    let left = parseFloat(s.el.style.left);
+    left += s.speed * delta;
     if(left>window.innerWidth) left=-100;
-    s.el.style.left=left+'px';
+    s.el.style.left = left+'px';
   });
 }
 
 // ---------------- Controls ----------------
 function setupControls(){
-  // Linker Joystick
   const leftZone=document.getElementById('joystickLeft');
   if(leftZone){
     const leftJoy=nipplejs.create({ zone:leftZone, mode:'static', position:{ left:'80px', bottom:'80px' }, size:120 });
@@ -162,7 +164,6 @@ function setupControls(){
     leftJoy.on('end',()=>{ move.x=0; move.z=0; });
   }
 
-  // Rechter Touch (Kamera)
   const rightZone=document.getElementById('rightTouch');
   if(rightZone){
     rightZone.style.touchAction='none';
@@ -179,7 +180,6 @@ function setupControls(){
     rightZone.addEventListener('touchend',()=>{ touching=false; look.x=0; look.y=0; });
   }
 
-  // Jet & Shoot Buttons
   const jetUp=document.getElementById('jetUpBtn');
   const jetDown=document.getElementById('jetDownBtn');
   const shoot=document.getElementById('shootBtn');
@@ -196,7 +196,8 @@ function animate(){
   requestAnimationFrame(animate);
   const delta=Math.min(0.06, clock.getDelta());
 
-  animateShips(delta);
+  // Ladebildschirm Schiffe
+  if(loadProgress<totalAssets) animateShips(delta);
 
   // Look
   myPlayer.rotation += look.x*1.6*delta;
@@ -236,9 +237,9 @@ function applyJetpack(delta){
 }
 
 // ---------------- FP-Arms, Doppelblaster, Saber ----------------
-function buildFPArms(){ /* FP-Arms Code hier */ }
-function fireDoubleLaser(){ /* Doppelblaster Code hier */ }
-function triggerSaber(){ /* Secret Saber Code hier */ }
+function buildFPArms(){ /* FP-Arms Code */ }
+function fireDoubleLaser(){ /* Doppelblaster Code */ }
+function triggerSaber(){ /* Secret Saber Code */ }
 
 // ---------------- Start ----------------
 initDomRefs();
