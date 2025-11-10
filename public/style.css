@@ -1,28 +1,27 @@
-body,html { margin:0; padding:0; overflow:hidden; font-family:sans-serif; }
-#gameCanvas { display:block; }
-
 #loadscreen {
-  position:fixed; top:0; left:0; width:100%; height:100%; background:#001030;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:9999;
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:#001030 url('/assets/starfield.jpg') repeat;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:white; z-index:9999; overflow:hidden;
 }
-#starwarsLogo { width:300px; animation:pulse 1.2s infinite alternate; }
-#loadingBarWrapper { width:70%; height:20px; background:#222; margin-top:20px; border-radius:10px; overflow:hidden; }
-#loadingBar { width:0%; height:100%; background:#00ffff; border-radius:10px; }
 
-@keyframes pulse { 0%{ transform:scale(0.95); opacity:0.8;} 100%{ transform:scale(1.05); opacity:1;} }
-
-#usernameModal {
-  position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:9998;
+#starwarsLogo {
+  width:300px;
+  animation:pulse 1.2s infinite alternate;
+  filter: drop-shadow(0 0 15px #00ffff);
 }
-#usernameInput { padding:10px; font-size:18px; margin-top:10px; }
-#startBtn { padding:10px 20px; margin-top:10px; font-size:18px; cursor:pointer; }
 
-#joystickLeft { position:absolute; bottom:50px; left:50px; width:150px; height:150px; z-index:1000; }
-#rightTouch { position:absolute; top:0; right:0; bottom:0; left:50%; z-index:1000; }
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity:0.8; }
+  100% { transform: scale(1.05); opacity:1; }
+}
 
-.hudBtn { position:absolute; bottom:80px; right:50px; padding:15px; font-size:18px; z-index:1000; margin-top:10px; }
+#loadingBarWrapper {
+  width:70%; height:20px; background:#222; margin-top:20px; border-radius:10px; overflow:hidden;
+}
+#loadingBar { width:0%; height:100%; background:#00ffff; border-radius:10px; transition:width 0.1s ease; }
 
-#menuButton { position:absolute; top:20px; right:20px; font-size:28px; cursor:pointer; z-index:1000; }
-#optionsPanel { position:absolute; top:60px; right:20px; background:rgba(0,0,0,0.85); padding:15px; border-radius:10px; color:white; z-index:1000; }
-.hidden { display:none; }
+#ship {
+  position:absolute; width:50px; top:0; left:0; opacity:0.8; z-index:9999;
+  transform:rotate(0deg);
+}
