@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>Coruscant Jetpack FPS</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Coruscant Jetpack FPS</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Username Modal -->
@@ -12,13 +12,45 @@
     <div class="modalCard">
       <h2>Wähle deinen Namen</h2>
       <input id="usernameInput" placeholder="Spielername" maxlength="16" />
+      <div class="row">
+        <label>Steuerung:</label>
+        <select id="controlSelect">
+          <option value="ipad">iPad / Touch</option>
+          <option value="keyboard">Tastatur (WASD / Maus)</option>
+          <option value="controller">Controller</option>
+        </select>
+      </div>
       <button id="startBtn">Start</button>
-      <p class="hint">Tastatur: drücke 9 für ein geheimes Laserschwert (nur Tastatur)</p>
+      <p class="hint">Tastatur: drücke 9 für ein geheimnisvolles Laserschwert</p>
     </div>
   </div>
 
   <!-- Loadscreen -->
-  <div id="loadscreen">Lädt Welt…</div>
+  <div id="loadscreen">
+    <div class="loaderCard">
+      <div id="loaderTitle">Coruscant lädt…</div>
+      <div id="loaderBar"><div id="loaderProgress"></div></div>
+      <div id="loaderHint">Erstelle die Stadt…</div>
+    </div>
+  </div>
+
+  <!-- Top-right menu button -->
+  <div id="menuButton">☰</div>
+
+  <!-- Options Panel (bottom-right) -->
+  <div id="optionsPanel" class="hidden">
+    <h3>Optionen</h3>
+    <div class="optionRow"><label>Steuerung:</label>
+      <select id="optControlSelect">
+        <option value="ipad">iPad / Touch</option>
+        <option value="keyboard">Tastatur</option>
+        <option value="controller">Controller</option>
+      </select>
+    </div>
+    <div class="optionRow"><label>Helligkeit</label>
+      <input type="range" id="brightness" min="0.5" max="1.6" step="0.1" value="1.0"></div>
+    <button id="closeOptions">Schließen</button>
+  </div>
 
   <!-- Canvas -->
   <canvas id="gameCanvas"></canvas>
@@ -32,17 +64,18 @@
   <!-- Right touch zone (swipe to look) -->
   <div id="rightTouch" class="controlZone rightZone"></div>
 
-  <!-- Buttons -->
+  <!-- Buttons (right bottom) -->
   <div id="hud">
     <button id="jetUpBtn" class="bigBtn">↑</button>
     <button id="jetDownBtn" class="bigBtn">↓</button>
     <button id="shootBtn" class="bigBtn">🔫</button>
   </div>
 
-  <!-- Scripts -->
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
+
   <script src="scripts.js"></script>
 </body>
 </html>
