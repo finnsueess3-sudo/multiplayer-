@@ -21,24 +21,27 @@ canvas {
     pointer-events: none;
 }
 
-#crosshair::after {
+#crosshair::after,
+#crosshair::before {
     content: '';
     position: absolute;
+    background-color: red;
+}
+
+/* Vertikale Linie */
+#crosshair::after {
     left: 9px;
     top: 0;
     width: 2px;
     height: 20px;
-    background: red;
 }
 
+/* Horizontale Linie */
 #crosshair::before {
-    content: '';
-    position: absolute;
     top: 9px;
     left: 0;
     width: 20px;
     height: 2px;
-    background: red;
 }
 
 /* Mobile Steuerung */
@@ -47,8 +50,9 @@ canvas {
     bottom: 10px;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 0 20px;
+    z-index: 10;
 }
 
 .controlButton {
@@ -61,4 +65,5 @@ canvas {
     color: white;
     font-weight: bold;
     user-select: none;
+    touch-action: none; /* verhindert Scrollen auf Mobilgeräten */
 }
