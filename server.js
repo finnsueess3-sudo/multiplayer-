@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
@@ -5,49 +6,42 @@ const io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
-const players = {};
-const buildings = []; // Gebäude mit Widerstand
-
-// Beispielgebäude
-for(let i=-50;i<=50;i+=20){
-    for(let j=-50;j<=50;j+=20){
-        if(Math.random() > 0.5){
-            buildings.push({x:i, z:j, width:10, depth:10, height:Math.random()*15+5, hp:100});
-        }
-    }
-}
+const players = {}; // { socketId: { x,y,z,rotation, name } }
 
 io.on('connection', (socket) => {
-    console.log('Spieler verbunden:', socket.id);
+  console.log('connected', socket.id);
 
-    players[socket.id] = {x:0,y:1,z:0,rotation:0};
-
+  // new player
+  socket.on('newPlayer', (data) => {
+    players[socket.id] = { x: data.x||0, y: data.y||3, z: data.z||0, rotation: data.rotation||0, name: data.name || 'Spieler' };
+    // send current players to this client
     socket.emit('currentPlayers', players);
-    socket.emit('currentBuildings', buildings);
-    socket.broadcast.emit('newPlayer', {id: socket.id, data: players[socket.id]});
+    // notify others
+    socket.broadcast.emit('newPlayer', { id: socket.id, data: players[socket.id] });
+  });
 
-    socket.on('playerMovement', (data) => {
-        players[socket.id] = data;
-        socket.broadcast.emit('playerMoved', {id: socket.id, data});
-    });
+  // movement updates
+  socket.on('playerMovement', (data) => {
+    if (!players[socket.id]) return;
+    players[socket.id].x = data.x; players[socket.id].y = data.y; players[socket.id].z = data.z;
+    players[socket.id].rotation = data.rotation;
+    socket.broadcast.emit('playerMoved', { id: socket.id, data: players[socket.id] });
+  });
 
-    socket.on('shoot', ({position, direction}) => {
-        // Prüfen ob Gebäude getroffen wird
-        buildings.forEach(b => {
-            let dx = position.x - b.x;
-            let dz = position.z - b.z;
-            if(Math.abs(dx)<b.width/2 && Math.abs(dz)<b.depth/2){
-                b.hp -= 25; // Schaden
-                if(b.hp<=0) console.log("Gebäude zerstört!");
-            }
-        });
-        socket.broadcast.emit('bulletFired', {position, direction});
-    });
+  // shooting: broadcast to others (they'll render visual beam)
+  socket.on('shoot', (data) => {
+    socket.broadcast.emit('shoot', data);
+  });
 
-    socket.on('disconnect', () => {
-        delete players[socket.id];
-        socket.broadcast.emit('playerDisconnected', socket.id);
-    });
+  // lightsaber: broadcast (secret)
+  socket.on('saber', (data) => {
+    socket.broadcast.emit('saber', data);
+  });
+
+  socket.on('disconnect', () => {
+    delete players[socket.id];
+    socket.broadcast.emit('playerDisconnected', socket.id);
+  });
 });
 
-http.listen(3000, () => console.log('Server läuft auf Port 3000'));
+http.listen(3000, () => console.log('Server läuft auf :3000'));
