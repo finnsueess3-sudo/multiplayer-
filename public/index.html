@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>3D Multiplayer FPS</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Coruscant Jetpack FPS</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="loadscreen">Lädt...</div>
-<canvas id="gameCanvas"></canvas>
-<div id="crosshair"></div>
+  <!-- Username Modal -->
+  <div id="usernameModal" class="modal">
+    <div class="modalCard">
+      <h2>Wähle deinen Namen</h2>
+      <input id="usernameInput" placeholder="Spielername" maxlength="16" />
+      <button id="startBtn">Start</button>
+      <p class="hint">Tastatur: drücke 9 für ein geheimes Laserschwert (nur Tastatur)</p>
+    </div>
+  </div>
 
-<!-- Joystick Controls -->
-<div id="joystickLeft"></div>
-<div id="joystickRight"></div>
-<div id="shootBtn" class="controlButton">🔫</div>
-<div id="jetpackBtn" class="controlButton">🛫</div>
+  <!-- Loadscreen -->
+  <div id="loadscreen">Lädt Welt…</div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
-<script src="scripts.js"></script>
+  <!-- Canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Crosshair -->
+  <div id="crosshair"></div>
+
+  <!-- Left joystick zone -->
+  <div id="joystickLeft" class="controlZone"></div>
+
+  <!-- Right touch zone (swipe to look) -->
+  <div id="rightTouch" class="controlZone rightZone"></div>
+
+  <!-- Buttons -->
+  <div id="hud">
+    <button id="jetUpBtn" class="bigBtn">↑</button>
+    <button id="jetDownBtn" class="bigBtn">↓</button>
+    <button id="shootBtn" class="bigBtn">🔫</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
